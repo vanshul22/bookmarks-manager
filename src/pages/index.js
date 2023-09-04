@@ -31,11 +31,11 @@ export default function Home() {
     loggedIn = await isLoggedIn();
     if (!loggedIn) {
       setScreen("signin");
-      console.log('User is not logged in:', loggedIn);
+      // console.log('User is not logged in:', loggedIn);
     } else {
       setScreen("home");
       fetchCategories();
-      console.log('User is logged in:', loggedIn);
+      // console.log('User is logged in:', loggedIn);
     }
   };
 
@@ -65,7 +65,7 @@ export default function Home() {
             <HeroSection />
             <div id='bookmark-list'>
               {categories.length !== 0 ? categories.map((category, index) => (
-                <BookmarkList key={index} category={category.name} categories={categories} />
+                <BookmarkList key={index} category={category.name} categories={categories} setCategories={setCategories} />
               )) : <></>}
             </div>
           </>

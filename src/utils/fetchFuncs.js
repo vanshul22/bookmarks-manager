@@ -1,4 +1,4 @@
-import { db } from "@/setup/firebase";
+import { auth, db } from "@/setup/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 export const fetchCategory = async () => {
@@ -17,11 +17,15 @@ export const fetchCategory = async () => {
 
 // Function to fetch bookmarks based on a specified category
 export const fetchBookmark = async (category) => {
+    // taking current user ID.
+    const user = auth.currentUser;
+    const userUID = user.uid;
+
     // Reference to the 'bookmarks' collection
     const bookmarksCollection = collection(db, 'bookmarks');
 
     // Create a query to fetch documents where the 'category' field matches the specified category
-    const querySnapshot = await getDocs(query(bookmarksCollection, where('category', '==', category)));
+    const querySnapshot = await getDocs(query(bookmarksCollection, where('category', '==', category), where('userUID', '==', userUID)));
 
     // Extract data from each document and store it in an array
     const bookmarks = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));

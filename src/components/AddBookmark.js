@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { BsFillBookmarkPlusFill } from 'react-icons/bs';
 import BookMarkForm from './BookMarkForm';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/setup/firebase';
 
-const AddBookmark = ({ categories, setBookmarks }) => {
+const AddBookmark = ({ categories, setBookmarks, setCategories }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleModal = () => {
@@ -28,7 +26,7 @@ const AddBookmark = ({ categories, setBookmarks }) => {
                     <div className={`modal-container w-[90%] max-w-screen-md`}>
                         <div className="modal-content bg-black  border border-white rounded-lg shadow-2xl shadow-slate-900">
                             <h3 className='text-center text-2xl font-extrabold text-gradient py-10' > Add Bookmark </h3>
-                            <BookMarkForm toggleModal={toggleModal} categories={categories} setBookmarks={setBookmarks} />
+                            <BookMarkForm toggleModal={toggleModal} categories={categories} setCategories={setCategories} setBookmarks={setBookmarks} />
                         </div>
                     </div>
                 </div>

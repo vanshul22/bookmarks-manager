@@ -1,14 +1,16 @@
 // components/MyForm.js
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { db } from '@/setup/firebase';
 import { collection, addDoc } from "firebase/firestore";
 import { fetchBookmark, fetchCategory } from '@/utils/fetchFuncs';
 import { toast } from 'react-toastify';
+import { auth } from "@/setup/firebase";
 
 
-const BookMarkForm = ({ toggleModal, categories, setBookmarks }) => {
+const BookMarkForm = ({ toggleModal, categories, setCategories, setBookmarks }) => {
+    const [categ, setCateg] = useState("");
     const initialValues = {
         title: '',
         url: '',
@@ -20,21 +22,38 @@ const BookMarkForm = ({ toggleModal, categories, setBookmarks }) => {
         title: Yup.string().required('Title is required').min(3, 'Title must be at least 3 characters').max(45, 'Title must be at most 30 characters'),
         url: Yup.string().required('URL is required').min(3, 'URL must be at least 3 characters').max(200, 'URL must be at most 200 characters'),
         desc: Yup.string().required('Description is required').min(3, 'Description must be at least 3 characters').max(100, 'Description must be at most 100 characters'),
-        category: Yup.string().required('Category is required').min(3, 'Category must be at least 3 characters').max(45, 'Category must be at most 45 characters'),
+        category: Yup.string().required('Category is required'),
     });
 
     const onSubmit = async (values, { setSubmitting }) => {
         // Handle form submission here
         setSubmitting(true);
         try {
-            await addDoc(collection(db, "bookmarks"), values);
+            // taking current user ID.
+            const user = auth.currentUser;
+            const userUID = user.uid;
+            // Saving into DB
+            await addDoc(collection(db, "bookmarks"), { ...values, userUID });
             const bookmarkDataArray = await fetchBookmark(values.category);
             setBookmarks(bookmarkDataArray);
             toast.success("Successfully Added Bookmark.");
             toggleModal();
-
         } catch (error) {
             console.error('Error adding document: ', error);
+        }
+    };
+
+    const onSubmitCategory = async () => {
+
+        try {
+            await addDoc(collection(db, "category"), { name: categ });
+            const categoryDataArray = await fetchCategory()
+            setCategories(categoryDataArray);
+            setCateg("");
+            toast.success("Successfully Added Category.");
+        } catch (error) {
+            console.error('Error adding document: ', error);
+            toast.error("unable to Add Category.");
         }
     };
 
@@ -72,7 +91,6 @@ const BookMarkForm = ({ toggleModal, categories, setBookmarks }) => {
                     <ErrorMessage name="category" component="div" className="text-red-600 text-xs mt-2" />
                 </div>
 
-
                 <div className="text-center">
                     <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"> Submit </button>
                 </div>
@@ -83,29 +101,24 @@ const BookMarkForm = ({ toggleModal, categories, setBookmarks }) => {
 
                 <div className="relative z-0 w-full mb-8 group flex items-center">
                     <div className="flex-grow">
-                        <Field
+                        <input
                             type="text"
-                            name="add-category"
+                            name="add_category"
                             className="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer text-black"
                             placeholder=" "
-                            required
+                            value={categ}
+                            onChange={e => setCateg(e.target.value)}
                         />
                         <label
-                            htmlFor="add-category"
+                            htmlFor="add_category"
                             className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
-                            Add Category
+                            Category Name
                         </label>
-                        <ErrorMessage name="add-category" component="div" className="text-red-600 text-xs mt-2" />
                     </div>
-                    <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 ml-2"> Add category</button>
+                    <button onClick={onSubmitCategory} type="button" className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 ml-2"> Add category</button>
                 </div>
             </Form>
-
-
-
-
-
         </Formik>
     );
 };

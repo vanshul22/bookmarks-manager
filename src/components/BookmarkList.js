@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AddBookmark from './AddBookmark';
 import { fetchBookmark } from '@/utils/fetchFuncs';
 
-function BookmarkList({ category, categories }) {
+function BookmarkList({ category, categories, setCategories }) {
     const [bookmarks, setBookmarks] = useState([]);
     const [expandedBookmarkId, setExpandedBookmarkId] = useState(null);
 
@@ -30,7 +30,7 @@ function BookmarkList({ category, categories }) {
                     <div className="flex justify-between">
                         <div></div>
                         <h3 className="text-4xl text-center font-semibold mb-4">{category.charAt(0).toUpperCase() + category.slice(1)}</h3>
-                        <AddBookmark categories={categories} setBookmarks={setBookmarks} />
+                        <AddBookmark categories={categories} setBookmarks={setBookmarks} setCategories={setCategories} />
                     </div>
                     <div>
                         <div className="grid sm:grid-cols-5 gap-4">
