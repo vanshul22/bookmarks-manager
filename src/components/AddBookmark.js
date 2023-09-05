@@ -9,11 +9,6 @@ const AddBookmark = ({ categories, setBookmarks, setCategories }) => {
         setIsOpen(!isOpen);
     };
 
-
-    useEffect(() => {
-
-    }, []);
-
     return (
         <div>
             <button onClick={toggleModal} className="flex items-center justify-center gap-3">

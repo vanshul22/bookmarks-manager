@@ -37,8 +37,10 @@ const Signin = ({ setScreen, fetchCategories }) => {
         } catch (error) {
             // const errorCode = error.code;
             // const errorMessage = error.message;
-            console.log(error)
-            toast.error("Please authenticate with correct credentials !!!")
+            // console.log(error)
+            toast.error("Please authenticate with correct credentials !!!", {
+                style: { fontSize: "12px" },
+            })
         }
     }
 

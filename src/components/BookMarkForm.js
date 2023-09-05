@@ -36,7 +36,9 @@ const BookMarkForm = ({ toggleModal, categories, setCategories, setBookmarks }) 
             await addDoc(collection(db, "bookmarks"), { ...values, userUID });
             const bookmarkDataArray = await fetchBookmark(values.category);
             setBookmarks(bookmarkDataArray);
-            toast.success("Successfully Added Bookmark.");
+            toast.success("Successfully Added Bookmark.", {
+                style: { fontSize: "12px" },
+            });
             toggleModal();
         } catch (error) {
             console.error('Error adding document: ', error);
@@ -50,10 +52,14 @@ const BookMarkForm = ({ toggleModal, categories, setCategories, setBookmarks }) 
             const categoryDataArray = await fetchCategory()
             setCategories(categoryDataArray);
             setCateg("");
-            toast.success("Successfully Added Category.");
+            toast.success("Successfully Added Category.", {
+                style: { fontSize: "12px" },
+            });
         } catch (error) {
             console.error('Error adding document: ', error);
-            toast.error("unable to Add Category.");
+            toast.error("unable to Add Category.", {
+                style: { fontSize: "12px" },
+            });
         }
     };
 

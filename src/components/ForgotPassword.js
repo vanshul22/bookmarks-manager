@@ -17,7 +17,6 @@ function ForgotPassword({ setScreen }) {
 
     try {
       await sendPasswordResetEmail(auth, email);
-      console.log("send");
       toast.success(`Password Reset Link Sent to your Email`, {
         style: { fontSize: "12px" },
       });

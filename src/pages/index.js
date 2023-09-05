@@ -43,7 +43,9 @@ export default function Home() {
     try {
       await signOut(auth);
       // Sign-out successful.
-      toast.success("User signed out successfully.");
+      toast.success("User signed out successfully.", {
+        style: { fontSize: "12px" },
+      });
       setScreen("signin");
     } catch (error) {
       // An error happened.
