@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react'
 import { BsFillBookmarkPlusFill } from 'react-icons/bs';
 import BookMarkForm from './BookMarkForm';
 
-const AddBookmark = ({ categories, setBookmarks, setCategories }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const AddBookmark = ({ categories, setBookmarks, setCategories, selectedBookmark, setSelectedBookmark, isOpen, setIsOpen }) => {
 
     const toggleModal = () => {
+        setSelectedBookmark({ id: 0, title: '', url: '', desc: '', category: '' });
         setIsOpen(!isOpen);
     };
 
@@ -21,7 +20,7 @@ const AddBookmark = ({ categories, setBookmarks, setCategories }) => {
                     <div className={`modal-container w-[90%] max-w-screen-md`}>
                         <div className="modal-content bg-black  border border-white rounded-lg shadow-2xl shadow-slate-900">
                             <h3 className='text-center text-2xl font-extrabold text-gradient py-10' > Add Bookmark </h3>
-                            <BookMarkForm toggleModal={toggleModal} categories={categories} setCategories={setCategories} setBookmarks={setBookmarks} />
+                            <BookMarkForm toggleModal={toggleModal} categories={categories} setCategories={setCategories} setBookmarks={setBookmarks} selectedBookmark={selectedBookmark} />
                         </div>
                     </div>
                 </div>

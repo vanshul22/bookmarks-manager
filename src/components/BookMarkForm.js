@@ -3,25 +3,25 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { db } from '@/setup/firebase';
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 import { fetchBookmark, fetchCategory } from '@/utils/fetchFuncs';
 import { toast } from 'react-toastify';
 import { auth } from "@/setup/firebase";
 
 
-const BookMarkForm = ({ toggleModal, categories, setCategories, setBookmarks }) => {
+const BookMarkForm = ({ toggleModal, categories, setCategories, setBookmarks, selectedBookmark }) => {
     const [categ, setCateg] = useState("");
     const initialValues = {
-        title: '',
-        url: '',
-        desc: '',
-        category: '',
+        title: selectedBookmark?.title || "",
+        url: selectedBookmark?.url || "",
+        desc: selectedBookmark?.desc || "",
+        category: selectedBookmark?.category || "",
     };
 
     const validationSchema = Yup.object({
         title: Yup.string().required('Title is required').min(3, 'Title must be at least 3 characters').max(45, 'Title must be at most 30 characters'),
         url: Yup.string().required('URL is required').min(3, 'URL must be at least 3 characters').max(200, 'URL must be at most 200 characters'),
-        desc: Yup.string().required('Description is required').min(3, 'Description must be at least 3 characters').max(100, 'Description must be at most 100 characters'),
+        desc: Yup.string().required('Description is required').min(3, 'Description must be at least 3 characters').max(300, 'Description must be at most 300 characters'),
         category: Yup.string().required('Category is required'),
     });
 
@@ -33,12 +33,15 @@ const BookMarkForm = ({ toggleModal, categories, setCategories, setBookmarks }) 
             const user = auth.currentUser;
             const userUID = user.uid;
             // Saving into DB
-            await addDoc(collection(db, "bookmarks"), { ...values, userUID });
+            if (selectedBookmark?.id) {
+                await updateDoc(doc(db, 'bookmarks', selectedBookmark?.id), { ...values });
+                toast.success("Successfully Updated Bookmark.", { style: { fontSize: "12px" } });
+            } else {
+                await addDoc(collection(db, "bookmarks"), { ...values });
+                toast.success("Successfully Added Bookmark.", { style: { fontSize: "12px" } });
+            }
             const bookmarkDataArray = await fetchBookmark(values.category);
             setBookmarks(bookmarkDataArray);
-            toast.success("Successfully Added Bookmark.", {
-                style: { fontSize: "12px" },
-            });
             toggleModal();
         } catch (error) {
             console.error('Error adding document: ', error);
